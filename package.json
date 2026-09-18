@@ -1,0 +1,15 @@
+{
+  "name": "unikraft-node-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "axios": "^1.7.9",
+    "ws": "^8.18.0",
+    "uuid": "^9.0.1",
+    "dotenv": "^16.4.5"
+  }
+}
