@@ -27,15 +27,11 @@ jobs:
       - name: Build & push image
         run: unikraft build . --output kaceygarman/my-node-app:latest
 
-      - name: Remove old instance if exists
-        continue-on-error: true
-        run: unikraft instance rm -f my-node-app || true
-
       - name: Deploy instance
         run: |
           unikraft run --metro fra \
             --name my-node-app \
-            -p 443:8080/http+tls \
+            -p 443:3000/http+tls \
             -m 512M \
             --scale-to-zero policy=on,cooldown-time=5000,stateful=true \
             --image kaceygarman/my-node-app:latest
