@@ -27,6 +27,10 @@ jobs:
       - name: Build & push image
         run: unikraft build . --output kaceygarman/my-node-app:latest
 
+      - name: Remove old instance (if exists)
+        run: unikraft instance rm -f my-node-app
+        continue-on-error: true
+
       - name: Deploy instance
         run: |
           unikraft run --metro fra \
