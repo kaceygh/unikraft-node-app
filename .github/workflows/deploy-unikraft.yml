@@ -39,7 +39,6 @@ jobs:
             --name my-node-app-v3 \
             -p 443:3000/http+tls \
             -m 512M \
-            --scale-to-zero policy=on,cooldown-time=5000,stateful=true \
             --image kaceygarman/my-node-app:latest \
             -e YT_WARPOUT=true
 
