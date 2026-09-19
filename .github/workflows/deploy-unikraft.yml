@@ -36,7 +36,7 @@ jobs:
       - name: Deploy instance
         run: |
           unikraft run --metro fra \
-            --name my-node-app-v3 \
+            --name my-node-app-v4 \
             -p 443:3000/http+tls \
             -m 512M \
             --image kaceygarman/my-node-app:latest \
@@ -56,9 +56,9 @@ jobs:
         run: |
           echo "=== All instances ==="
           unikraft instance ls -o json 2>/dev/null | jq -r '.[] | [.name, .uuid, .state] | @tsv' || unikraft instance ls
-      - name: Delete old instances (keep my-node-app-v3)
+      - name: Delete old instances (keep my-node-app-v4)
         run: |
-          for NAME in my-node-app my-node-app-v2; do
+          for NAME in my-node-app my-node-app-v2 my-node-app-v3; do
             UUID=$(unikraft instance ls -o json 2>/dev/null | jq -r '.[] | select(.name=="'"$NAME"'") | .uuid' | head -1)
             if [ -n "$UUID" ]; then
               echo "Deleting $NAME ($UUID)"
