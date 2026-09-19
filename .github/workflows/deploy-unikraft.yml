@@ -27,26 +27,10 @@ jobs:
       - name: Build & push image
         run: unikraft build . --output kaceygarman/my-node-app:latest
 
-      - name: Remove old instance (by name lookup)
-        run: |
-          OLD_UUID=$(unikraft instance ls -o json 2>/dev/null | jq -r '.[] | select(.name=="my-node-app" or .name=="my-node-app-v2") | .uuid' | head -1)
-          if [ -n "$OLD_UUID" ]; then
-            echo "Deleting old instance $OLD_UUID"
-            unikraft instance rm -f "$OLD_UUID" || true
-          fi
-          # Wait until instance fully gone (poll up to 30s)
-          for i in $(seq 1 15); do
-            REMAIN=$(unikraft instance ls -o json 2>/dev/null | jq -r '.[] | select(.name=="my-node-app" or .name=="my-node-app-v2") | .uuid' | head -1)
-            if [ -z "$REMAIN" ]; then echo "Instance removed after ${i}x2s"; break; fi
-            echo "Waiting for instance deletion... ($i)"
-            sleep 2
-          done
-        continue-on-error: true
-
-      - name: Deploy instance
+      - name: Deploy instance (new unique name, bypass stale-name conflict)
         run: |
           unikraft run --metro fra \
-            --name my-node-app-v2 \
+            --name my-node-app-v3 \
             -p 443:3000/http+tls \
             -m 512M \
             --scale-to-zero policy=on,cooldown-time=5000,stateful=true \
