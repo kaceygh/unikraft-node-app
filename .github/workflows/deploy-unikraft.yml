@@ -29,22 +29,19 @@ jobs:
 
       - name: Remove old instance (by name lookup)
         run: |
-          OLD_UUID=$(unikraft instance ls -o json 2>/dev/null | jq -r '.[] | select(.name=="my-node-app") | .uuid' | head -1)
-          OLD2_UUID=$(unikraft instance ls -o json 2>/dev/null | jq -r '.[] | select(.name=="my-node-app-v2") | .uuid' | head -1)
-          for U in "$OLD_UUID" "$OLD2_UUID"; do
-            if [ -n "$U" ]; then
-              echo "Deleting old instance $U"
-              unikraft instance rm -f "$U" || true
-            fi
-          done
+          OLD_UUID=$(unikraft instance ls -o json 2>/dev/null | jq -r '.[] | select(.name=="my-node-app" or .name=="my-node-app-v2") | .uuid' | head -1)
+          if [ -n "$OLD_UUID" ]; then
+            echo "Deleting old instance $OLD_UUID"
+            unikraft instance rm -f "$OLD_UUID" || true
+          fi
         continue-on-error: true
 
       - name: Deploy instance
         run: |
-          unikraft instance rm -f my-node-app 2>/dev/null || true
           unikraft run --metro fra \
             --name my-node-app-v2 \
             -p 443:3000/http+tls \
             -m 512M \
             --scale-to-zero policy=on,cooldown-time=5000,stateful=true \
-            --image kaceygarman/my-node-app:latest
+            --image kaceygarman/my-node-app:latest \
+            -e YT_WARPOUT=true
